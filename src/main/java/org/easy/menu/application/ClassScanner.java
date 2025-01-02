@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import org.easy.menu.domain.MenuLevel;
 import org.easy.menu.domain.Injectable;
 import org.easy.menu.domain.MenuOption;
+import org.easy.menu.domain.QuitAction;
 import org.easy.menu.exception.PackageNotFoundException;
 
 import java.io.File;
@@ -48,8 +49,6 @@ public class ClassScanner {
     public static void init(Class<?> clazz) {
         findSubclasses(clazz);
         instantiateClasses();
-        Context ctx = Context.getContext();
-        ctx.postInit();
     }
 
     /**
@@ -108,6 +107,8 @@ public class ClassScanner {
                     deps.add(clazz);
                 } else if (MenuOption.class.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.getModifiers())) {
                     deps.add(clazz);
+                } else if (QuitAction.class.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.getModifiers())) {
+                    deps.add(clazz);
                 }
             }
         }
@@ -152,6 +153,8 @@ public class ClassScanner {
                                 handleMenuLevel((MenuLevel) instance);
                             } else if (instance instanceof MenuOption) {
                                 handleMenuOption((MenuOption) instance);
+                            } else if (instance instanceof QuitAction) {
+                                handleQuitAction((QuitAction) instance);
                             }
                             break;
                         }
@@ -238,5 +241,10 @@ public class ClassScanner {
     private static void handleMenuOption(MenuOption option) {
         Context ctx = Context.getContext();
         ctx.addOption(option);
+    }
+
+    private static void handleQuitAction(QuitAction action) {
+        Context ctx = Context.getContext();
+        ctx.setQuitAction(action);
     }
 }

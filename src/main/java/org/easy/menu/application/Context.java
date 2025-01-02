@@ -1,11 +1,11 @@
 package org.easy.menu.application;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import org.easy.menu.domain.MenuLevel;
 import org.easy.menu.domain.MenuOption;
-import org.easy.menu.exception.MissingHomeMenuException;
-import org.easy.menu.exception.MultipleHomeException;
-import org.easy.menu.exception.UnknownLevelException;
+import org.easy.menu.domain.QuitAction;
+import org.easy.menu.exception.*;
 
 import java.util.*;
 
@@ -26,11 +26,15 @@ public class Context {
     private static Context instance = null;
 
     private final List<MenuLevel> levels = new ArrayList<>();
+
+    @Getter(value = AccessLevel.NONE)
     private final Map<Class<? extends MenuLevel>, List<MenuOption>> groupedOptions = new HashMap<>();
 
     private MenuLevel currentLevel = null;
 
     private MenuLevel home = null;
+
+    private QuitAction quitAction = null;
 
     private Context(){}
     /**
@@ -76,6 +80,10 @@ public class Context {
         }
 
         this.currentLevel = this.home;
+
+        if (this.quitAction == null) {
+            throw new MissingQuitActionException();
+        }
     }
 
     /**
@@ -120,5 +128,17 @@ public class Context {
 
     public List<MenuOption> getOptions(Class<? extends MenuLevel> level) {
         return groupedOptions.getOrDefault(level, new ArrayList<>());
+    }
+
+    public List<MenuOption> getOptions() {
+        return groupedOptions.getOrDefault(currentLevel.getClass(), new ArrayList<>());
+    }
+
+    public void setQuitAction(QuitAction quitAction) {
+        if (this.quitAction != null) {
+            throw new MultipleQuitException(this.quitAction, quitAction);
+        }
+
+        this.quitAction = quitAction;
     }
 }
