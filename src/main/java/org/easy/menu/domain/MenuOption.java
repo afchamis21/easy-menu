@@ -20,13 +20,5 @@ public abstract class MenuOption implements Action {
      * @since 1.0.0
      */
     public abstract Class<? extends MenuLevel> getLevel();
-
-    /**
-     * Retrieves the display label for this menu option.
-     *
-     * @return a {@code String} representing the label of this menu option.
-     * @since 1.0.0
-     */
-    public abstract String getLabel();
 }
 

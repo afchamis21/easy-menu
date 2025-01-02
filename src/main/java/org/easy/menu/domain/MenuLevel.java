@@ -24,13 +24,7 @@ public abstract class MenuLevel {
      */
     public abstract String getLabel();
 
-    /**
-     * Retrieves the parent menu level of this menu level, if any.
-     *
-     * @return an {@code Optional} containing the {@code Class} of the parent menu level, or empty if no parent exists.
-     * @since 1.0.0
-     */
-    public abstract Optional<Class<? extends MenuLevel>> getParent();
+    public abstract Optional<MoveAction> getBackAction();
 
     /**
      * Retrieves the list of navigation actions available for this menu level.
@@ -68,8 +62,6 @@ public abstract class MenuLevel {
      */
     public static class MoveAction implements Action {
         private final Class<? extends MenuLevel> target;
-
-        @Getter
         private final String label;
 
         /**
@@ -87,6 +79,11 @@ public abstract class MenuLevel {
         public void execute() throws UnknownLevelException {
             Context context = Context.getContext();
             context.navigate(target);
+        }
+
+        @Override
+        public String getLabel() {
+            return label;
         }
     }
 }

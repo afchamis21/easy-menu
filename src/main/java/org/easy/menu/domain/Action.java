@@ -23,4 +23,12 @@ public interface Action {
      * @since 1.0.0
      */
     void execute() throws Exception;
+
+    /**
+     * Retrieves the display label for this action.
+     *
+     * @return a {@code String} representing the label of this action.
+     * @since 1.0.0
+     */
+    String getLabel();
 }
