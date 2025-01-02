@@ -1,10 +1,7 @@
 package org.easy.menu.application;
 
 import lombok.SneakyThrows;
-import org.easy.menu.domain.MenuLevel;
-import org.easy.menu.domain.Injectable;
-import org.easy.menu.domain.MenuOption;
-import org.easy.menu.domain.QuitAction;
+import org.easy.menu.domain.*;
 import org.easy.menu.exception.PackageNotFoundException;
 
 import java.io.File;
@@ -17,15 +14,10 @@ import java.util.*;
 /**
  * Scans packages for classes that can be instantiated and managed by the application, including
  * {@link MenuLevel} subclasses and classes annotated with {@link Injectable}.
- * This class handles the discovery, instantiation, and dependency resolution of such classes.
  *
- * <p>The {@code ClassScanner} is responsible for scanning the specified package, identifying
- * relevant classes, and managing their instantiation based on their constructor dependencies.
- * It ensures that all dependencies are available before attempting to instantiate a class,
- * and handles the initialization of menu levels in the context of the application.</p>
- *
- * <p>Classes discovered by the scanner are instantiated and managed through a {@link Context},
- * which handles the navigation between different menu levels once they are instantiated.</p>
+ * <p>This class is responsible for discovering, instantiating, and resolving dependencies of classes
+ * used within the application. It ensures proper initialization of {@link MenuLevel}, {@link MenuOption},
+ * and other injectable components, maintaining their lifecycle in a {@link Context}.</p>
  *
  * @since 1.0.0
  * @author Andre Chamis
@@ -36,14 +28,12 @@ public class ClassScanner {
 
     /**
      * Initializes the class scanner for a given class.
-     * This method triggers the scanning of the specified class' package, finds relevant
-     * {@link MenuLevel} subclasses, {@link MenuOption} subclasses and {@link Injectable} classes, and attempts to
-     * instantiate them.
      *
-     * <p>After instantiation, the {@link Context} is initialized, and the {@code postInit} method
-     * is called to set the initial menu level.</p>
+     * <p>This method scans the package of the provided class for {@link MenuLevel}, {@link MenuOption}, and
+     * {@link Injectable} classes, and instantiates them. Once all dependencies are resolved, it initializes
+     * the application context by calling {@link Context#postInit()}.</p>
      *
-     * @param clazz the class to use for scanning the package
+     * @param clazz the class whose package will be scanned
      * @since 1.0.0
      */
     public static void init(Class<?> clazz) {
@@ -52,20 +42,19 @@ public class ClassScanner {
     }
 
     /**
-     * Finds subclasses of the given class within the package and identifies classes
-     * that are marked as {@link Injectable} or extend {@link MenuLevel}/{@link MenuOption}.
+     * Scans the package of the given class for subclasses of {@link MenuLevel}, {@link MenuOption}, or classes annotated
+     * with {@link Injectable}.
      *
-     * <p>This method scans the directory corresponding to the package of the given class,
-     * loading and identifying relevant classes.</p>
+     * <p>This method recursively scans the directory corresponding to the class's package,
+     * loading classes and identifying those relevant to the application's context.</p>
      *
-     * @param clazz the class to start scanning for subclasses
-     * @throws PackageNotFoundException if the package or directory cannot be found
+     * @param clazz the class to scan for related components
+     * @throws PackageNotFoundException if the package or directory is not found
      * @since 1.0.0
      */
     @SneakyThrows
     private static void findSubclasses(Class<?> clazz) {
         String packageName = clazz.getPackageName();
-
         String path = packageName.replace(".", "/");
         URL resource = Thread.currentThread().getContextClassLoader().getResource(path);
 
@@ -82,23 +71,20 @@ public class ClassScanner {
     }
 
     /**
-     * Scans a directory for classes and identifies those that are subclasses of
+     * Recursively scans the specified directory for classes that are either subclasses of
      * {@link MenuLevel}/{@link MenuOption} or annotated with {@link Injectable}.
      *
-     * <p>The method recursively scans subdirectories and adds any identified classes to
-     * the set of dependencies.</p>
-     *
      * @param directory the directory to scan
-     * @param packageName the base package name
-     * @throws ClassNotFoundException if a class cannot be found
+     * @param packageName the package name corresponding to the directory
+     * @throws ClassNotFoundException if a class cannot be loaded
      * @since 1.0.0
      */
     private static void scanDirectory(File directory, String packageName) throws ClassNotFoundException {
-        for (File file: Objects.requireNonNull(directory.listFiles())) {
+        for (File file : Objects.requireNonNull(directory.listFiles())) {
             if (file.isDirectory()) {
                 scanDirectory(file, packageName + "." + file.getName());
             } else if (file.getName().endsWith(".class")) {
-                String className =  packageName + "." + file.getName().replace(".class", "");
+                String className = packageName + "." + file.getName().replace(".class", "");
                 Class<?> clazz = Class.forName(className);
 
                 if (MenuLevel.class.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.getModifiers())) {
@@ -115,13 +101,13 @@ public class ClassScanner {
     }
 
     /**
-     * Instantiates all classes that have been identified and resolved for dependencies.
+     * Instantiates all identified classes, resolving their dependencies using constructor injection.
      *
-     * <p>The method attempts to instantiate each class by checking its constructors for
-     * available dependencies. Once all dependencies are available, it creates instances
-     * and adds them to the context.</p>
+     * <p>Instances of {@link MenuLevel}, {@link MenuOption}, and other injectable classes are created and
+     * registered with the {@link Context}. Dependency resolution ensures that no class is instantiated
+     * until all its required dependencies are available.</p>
      *
-     * @throws RuntimeException if any dependencies cannot be resolved
+     * @throws RuntimeException if dependencies cannot be resolved for any class
      * @since 1.0.0
      */
     private static void instantiateClasses() {
@@ -172,9 +158,9 @@ public class ClassScanner {
     }
 
     /**
-     * Checks if all dependencies for the given parameter types are available in the instantiated objects map.
+     * Checks if all dependencies required by a constructor are already instantiated.
      *
-     * @param parameterTypes the parameter types of a class constructor
+     * @param parameterTypes the constructor parameter types
      * @return {@code true} if all dependencies are available, {@code false} otherwise
      * @since 1.0.0
      */
@@ -188,15 +174,14 @@ public class ClassScanner {
     }
 
     /**
-     * Resolves the dependencies for a given constructor's parameter types.
+     * Retrieves the instantiated dependencies for the given constructor parameter types.
      *
-     * @param parameterTypes the parameter types of a class constructor
-     * @return an array of dependencies for the constructor
+     * @param parameterTypes the constructor parameter types
+     * @return an array of instantiated dependencies
      * @since 1.0.0
      */
-    private static Object[] getDependencies(Class<?>[] parameterTypes){
+    private static Object[] getDependencies(Class<?>[] parameterTypes) {
         Object[] parameters = new Object[parameterTypes.length];
-
         for (int i = 0; i < parameterTypes.length; i++) {
             Class<?> paramType = parameterTypes[i];
             parameters[i] = instantiatedObjects.get(paramType);
@@ -205,9 +190,9 @@ public class ClassScanner {
     }
 
     /**
-     * Removes the resolved dependencies from the set of pending dependencies.
+     * Removes the specified dependencies from the set of pending dependencies.
      *
-     * @param parameterTypes the parameter types of a class constructor
+     * @param parameterTypes the constructor parameter types
      * @since 1.0.0
      */
     private static void removeDependenciesFromSet(Class<?>[] parameterTypes) {
@@ -217,25 +202,24 @@ public class ClassScanner {
     }
 
     /**
-     * Handles a {@link MenuLevel} instance by adding it to the context.
-     * If the level is designated as the "home" level, it will be set as the home in the context.
+     * Adds a {@link MenuLevel} instance to the context and sets it as the home level if annotated with {@link Home}.
      *
-     * @param level the menu level to be added
+     * @param level the menu level instance
      * @since 1.0.0
      */
     private static void handleMenuLevel(MenuLevel level) {
         Context ctx = Context.getContext();
         ctx.addLevel(level);
 
-        if (level.isHome()) {
+        if (level.getClass().isAnnotationPresent(Home.class)) {
             ctx.setHome(level);
         }
     }
 
     /**
-     * Handles a {@link MenuOption} instance by adding it to the context.
+     * Adds a {@link MenuOption} instance to the context.
      *
-     * @param option the menu option to be added
+     * @param option the menu option instance
      * @since 1.0.0
      */
     private static void handleMenuOption(MenuOption option) {
@@ -243,6 +227,12 @@ public class ClassScanner {
         ctx.addOption(option);
     }
 
+    /**
+     * Sets the {@link QuitAction} in the context.
+     *
+     * @param action the quit action instance
+     * @since 1.0.0
+     */
     private static void handleQuitAction(QuitAction action) {
         Context ctx = Context.getContext();
         ctx.setQuitAction(action);

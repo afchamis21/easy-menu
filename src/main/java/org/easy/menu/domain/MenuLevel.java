@@ -1,6 +1,5 @@
 package org.easy.menu.domain;
 
-import lombok.Getter;
 import org.easy.menu.application.Context;
 import org.easy.menu.exception.UnknownLevelException;
 
@@ -41,16 +40,6 @@ public abstract class MenuLevel {
      * @since 1.0.0
      */
     public boolean showExit() {
-        return false;
-    }
-
-    /**
-     * Indicates whether this menu level is the home level of the menu structure.
-     *
-     * @return {@code true} if this level is the home level, {@code false} otherwise.
-     * @since 1.0.0
-     */
-    public boolean isHome() {
         return false;
     }
 
