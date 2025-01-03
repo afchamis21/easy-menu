@@ -4,16 +4,16 @@ import java.util.Scanner;
 
 public class InputUtil {
     private static final Scanner scanner = new Scanner(System.in);
-    public static long getLongInput(String s) {
+    public static int getIntInput(String s) {
         try {
             System.out.print(s);
-            long valor = scanner.nextLong();
+            int valor = scanner.nextInt();
             scanner.nextLine();
             return valor;
         } catch (Exception e) {
-            System.out.println("Enter a valid long number!");
+            System.out.println("Enter a valid Integer!");
             scanner.nextLine();
-            return getLongInput(s);
+            return getIntInput(s);
         }
     }
 }

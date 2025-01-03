@@ -1,13 +1,13 @@
 package org.easy.menu.application;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import org.easy.menu.domain.MenuLevel;
-import org.easy.menu.domain.MenuOption;
-import org.easy.menu.domain.QuitAction;
-import org.easy.menu.exception.*;
+import org.easy.menu.exception.MissingHomeMenuException;
+import org.easy.menu.exception.MultipleHomeException;
+import org.easy.menu.exception.UnknownLevelException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Manages the navigation context for menus, maintaining the current state and the list of available menu levels.
@@ -35,12 +35,6 @@ public class Context {
     private final List<MenuLevel> levels = new ArrayList<>();
 
     /**
-     * Maps menu levels to their corresponding menu options.
-     */
-    @Getter(value = AccessLevel.NONE)
-    private final Map<Class<? extends MenuLevel>, List<MenuOption>> groupedOptions = new HashMap<>();
-
-    /**
      * The current menu level in the application.
      */
     private MenuLevel currentLevel = null;
@@ -49,11 +43,6 @@ public class Context {
      * The home menu level, serving as the starting point of navigation.
      */
     private MenuLevel home = null;
-
-    /**
-     * The action executed when quitting the application.
-     */
-    private QuitAction quitAction = null;
 
     /**
      * Private constructor to enforce Singleton pattern.
@@ -103,10 +92,6 @@ public class Context {
         }
 
         this.currentLevel = this.home;
-
-        if (this.quitAction == null) {
-            throw new MissingQuitActionException();
-        }
     }
 
     /**
@@ -138,59 +123,5 @@ public class Context {
      */
     public void navigate(Class<? extends MenuLevel> target) throws UnknownLevelException {
         this.currentLevel = levels.stream().filter(l -> l.getClass().equals(target)).findFirst().orElseThrow(() -> new UnknownLevelException(target));
-    }
-
-    /**
-     * Adds a menu option to the context, associating it with a specific menu level.
-     *
-     * @param option the menu option to add
-     * @throws NullPointerException if the option is null
-     * @since 1.0.0
-     */
-    public void addOption(MenuOption option) {
-        Objects.requireNonNull(option);
-        if (!groupedOptions.containsKey(option.getLevel())) {
-            groupedOptions.put(option.getLevel(), new ArrayList<>());
-        }
-
-        groupedOptions.get(option.getLevel()).add(option);
-    }
-
-    /**
-     * Retrieves the list of menu options associated with a specific menu level.
-     *
-     * @param level the class of the menu level
-     * @return the list of menu options for the specified level
-     * @since 1.0.0
-     */
-    public List<MenuOption> getOptions(Class<? extends MenuLevel> level) {
-        return groupedOptions.getOrDefault(level, new ArrayList<>());
-    }
-
-    /**
-     * Retrieves the list of menu options associated with the current menu level.
-     *
-     * @return the list of menu options for the current level
-     * @since 1.0.0
-     */
-    public List<MenuOption> getOptions() {
-        return getOptions(currentLevel.getClass());
-    }
-
-    /**
-     * Sets the quit action for the application.
-     *
-     * <p>If a quit action has already been set, an exception will be thrown.</p>
-     *
-     * @param quitAction the quit action to set
-     * @throws MultipleQuitException if a quit action has already been set
-     * @since 1.0.0
-     */
-    public void setQuitAction(QuitAction quitAction) {
-        if (this.quitAction != null) {
-            throw new MultipleQuitException(this.quitAction, quitAction);
-        }
-
-        this.quitAction = quitAction;
     }
 }

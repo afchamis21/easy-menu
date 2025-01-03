@@ -1,12 +1,15 @@
 package org.easy.menu.application;
 
 import lombok.SneakyThrows;
-import org.easy.menu.domain.*;
+import org.easy.menu.domain.Home;
+import org.easy.menu.domain.Injectable;
+import org.easy.menu.domain.MenuLevel;
 import org.easy.menu.exception.PackageNotFoundException;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.*;
@@ -16,11 +19,11 @@ import java.util.*;
  * {@link MenuLevel} subclasses and classes annotated with {@link Injectable}.
  *
  * <p>This class is responsible for discovering, instantiating, and resolving dependencies of classes
- * used within the application. It ensures proper initialization of {@link MenuLevel}, {@link MenuOption},
+ * used within the application. It ensures proper initialization of {@link MenuLevel}
  * and other injectable components, maintaining their lifecycle in a {@link Context}.</p>
  *
- * @since 1.0.0
  * @author Andre Chamis
+ * @since 1.0.0
  */
 public class ClassScanner {
     private static final Set<Class<?>> deps = new HashSet<>();
@@ -29,7 +32,7 @@ public class ClassScanner {
     /**
      * Initializes the class scanner for a given class.
      *
-     * <p>This method scans the package of the provided class for {@link MenuLevel}, {@link MenuOption}, and
+     * <p>This method scans the package of the provided class for {@link MenuLevel} and
      * {@link Injectable} classes, and instantiates them. Once all dependencies are resolved, it initializes
      * the application context by calling {@link Context#postInit()}.</p>
      *
@@ -42,7 +45,7 @@ public class ClassScanner {
     }
 
     /**
-     * Scans the package of the given class for subclasses of {@link MenuLevel}, {@link MenuOption}, or classes annotated
+     * Scans the package of the given class for subclasses of {@link MenuLevel} or classes annotated
      * with {@link Injectable}.
      *
      * <p>This method recursively scans the directory corresponding to the class's package,
@@ -72,9 +75,9 @@ public class ClassScanner {
 
     /**
      * Recursively scans the specified directory for classes that are either subclasses of
-     * {@link MenuLevel}/{@link MenuOption} or annotated with {@link Injectable}.
+     * {@link MenuLevel} or annotated with {@link Injectable}.
      *
-     * @param directory the directory to scan
+     * @param directory   the directory to scan
      * @param packageName the package name corresponding to the directory
      * @throws ClassNotFoundException if a class cannot be loaded
      * @since 1.0.0
@@ -91,10 +94,6 @@ public class ClassScanner {
                     deps.add(clazz);
                 } else if (clazz.isAnnotationPresent(Injectable.class)) {
                     deps.add(clazz);
-                } else if (MenuOption.class.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.getModifiers())) {
-                    deps.add(clazz);
-                } else if (QuitAction.class.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.getModifiers())) {
-                    deps.add(clazz);
                 }
             }
         }
@@ -103,7 +102,7 @@ public class ClassScanner {
     /**
      * Instantiates all identified classes, resolving their dependencies using constructor injection.
      *
-     * <p>Instances of {@link MenuLevel}, {@link MenuOption}, and other injectable classes are created and
+     * <p>Instances of {@link MenuLevel} and other injectable classes are created and
      * registered with the {@link Context}. Dependency resolution ensures that no class is instantiated
      * until all its required dependencies are available.</p>
      *
@@ -137,10 +136,6 @@ public class ClassScanner {
 
                             if (instance instanceof MenuLevel) {
                                 handleMenuLevel((MenuLevel) instance);
-                            } else if (instance instanceof MenuOption) {
-                                handleMenuOption((MenuOption) instance);
-                            } else if (instance instanceof QuitAction) {
-                                handleQuitAction((QuitAction) instance);
                             }
                             break;
                         }
@@ -208,33 +203,18 @@ public class ClassScanner {
      * @since 1.0.0
      */
     private static void handleMenuLevel(MenuLevel level) {
+        Method[] actions = level.getActions();
+        for (Method action : actions) {
+            if (action.getParameterCount() > 0) {
+                throw new IllegalArgumentException("The method: " + action.getName() + " has arguments. Methods annotated with @Action can not have any arguments!");
+            }
+        }
+
         Context ctx = Context.getContext();
         ctx.addLevel(level);
 
         if (level.getClass().isAnnotationPresent(Home.class)) {
             ctx.setHome(level);
         }
-    }
-
-    /**
-     * Adds a {@link MenuOption} instance to the context.
-     *
-     * @param option the menu option instance
-     * @since 1.0.0
-     */
-    private static void handleMenuOption(MenuOption option) {
-        Context ctx = Context.getContext();
-        ctx.addOption(option);
-    }
-
-    /**
-     * Sets the {@link QuitAction} in the context.
-     *
-     * @param action the quit action instance
-     * @since 1.0.0
-     */
-    private static void handleQuitAction(QuitAction action) {
-        Context ctx = Context.getContext();
-        ctx.setQuitAction(action);
     }
 }
