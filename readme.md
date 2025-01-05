@@ -239,7 +239,10 @@ public class Application {
     }
 }
 ```
+---
+## **Example**
 
+To see how Easy Menu can be integrated into your project, check out the [easy-menu-example repository](https://github.com/afchamis21/easy-menu-example). It demonstrates how to create and navigate a simple menu system using Easy Menu.
 ---
 
 ## **Contributing**
