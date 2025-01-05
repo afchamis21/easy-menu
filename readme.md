@@ -12,7 +12,7 @@ Add the library to your project. If using Maven, include the following dependenc
 
 ```xml
 <dependency>
-    <groupId>com.easy.menu</groupId>
+    <groupId>com.chamis.andre</groupId>
     <artifactId>easy-menu</artifactId>
     <version>1.0.0</version>
 </dependency>
