@@ -16,10 +16,10 @@ import java.util.List;
  * application's runtime. It controls navigation between different menu levels and manages the initial "home"
  * level of the application.</p>
  *
- * <p>After initialization, the context must have a defined "home" level. Otherwise, an exception will be thrown.</p>
+ * <p>Menu options for navigation are automatically determined by scanning for methods in {@link MenuLevel}
+ * annotated with {@link org.easy.menu.annotation.Action}.</p>
  *
  * @since 1.0.0
- * @author Andre Chamis
  */
 @Getter
 public class Context {
@@ -69,7 +69,9 @@ public class Context {
     /**
      * Adds a menu level to the list of available levels in the context.
      *
-     * <p>This method allows adding new menu levels as they are discovered or created.</p>
+     * <p>This method allows adding new menu levels as they are discovered or created.
+     * Actions for each menu level are dynamically determined by scanning for annotated methods
+     * using {@link org.easy.menu.annotation.Action}.</p>
      *
      * @param level the menu level to add
      * @since 1.0.0
@@ -117,11 +119,16 @@ public class Context {
      * <p>This method searches for the target menu level in the list of available levels and sets it as the current level.
      * If the level is not found, an {@link UnknownLevelException} will be thrown.</p>
      *
+     * <p>Navigation options are automatically derived from methods annotated with {@link org.easy.menu.annotation.Action}.</p>
+     *
      * @param target the class of the menu level to navigate to
      * @throws UnknownLevelException if the specified menu level is not found
      * @since 1.0.0
      */
     public void navigate(Class<? extends MenuLevel> target) throws UnknownLevelException {
-        this.currentLevel = levels.stream().filter(l -> l.getClass().equals(target)).findFirst().orElseThrow(() -> new UnknownLevelException(target));
+        this.currentLevel = levels.stream()
+                .filter(l -> l.getClass().equals(target))
+                .findFirst()
+                .orElseThrow(() -> new UnknownLevelException(target));
     }
 }

@@ -1,8 +1,8 @@
 package org.easy.menu.application;
 
 import lombok.SneakyThrows;
-import org.easy.menu.domain.Home;
-import org.easy.menu.domain.Injectable;
+import org.easy.menu.annotation.Home;
+import org.easy.menu.annotation.Injectable;
 import org.easy.menu.domain.MenuLevel;
 import org.easy.menu.exception.PackageNotFoundException;
 
@@ -18,9 +18,9 @@ import java.util.*;
  * Scans packages for classes that can be instantiated and managed by the application, including
  * {@link MenuLevel} subclasses and classes annotated with {@link Injectable}.
  *
- * <p>This class is responsible for discovering, instantiating, and resolving dependencies of classes
- * used within the application. It ensures proper initialization of {@link MenuLevel}
- * and other injectable components, maintaining their lifecycle in a {@link Context}.</p>
+ * <p>This class discovers and resolves dependencies, ensuring the initialization of {@link MenuLevel}
+ * instances and injectable components. It also validates actions annotated with {@link org.easy.menu.annotation.Action}
+ * to ensure compliance with application rules.</p>
  *
  * @author Andre Chamis
  * @since 1.0.0
@@ -29,12 +29,15 @@ public class ClassScanner {
     private static final Set<Class<?>> deps = new HashSet<>();
     private static final Map<Class<?>, Object> instantiatedObjects = new HashMap<>();
 
+    private ClassScanner() {
+    }
+
     /**
      * Initializes the class scanner for a given class.
      *
      * <p>This method scans the package of the provided class for {@link MenuLevel} and
-     * {@link Injectable} classes, and instantiates them. Once all dependencies are resolved, it initializes
-     * the application context by calling {@link Context#postInit()}.</p>
+     * {@link Injectable} classes. After resolving all dependencies, it initializes the
+     * application context by calling {@link Context#postInit()}.</p>
      *
      * @param clazz the class whose package will be scanned
      * @since 1.0.0
@@ -48,10 +51,10 @@ public class ClassScanner {
      * Scans the package of the given class for subclasses of {@link MenuLevel} or classes annotated
      * with {@link Injectable}.
      *
-     * <p>This method recursively scans the directory corresponding to the class's package,
-     * loading classes and identifying those relevant to the application's context.</p>
+     * <p>This method locates all relevant classes in the package and sub-packages, ensuring they
+     * can be initialized as part of the application's lifecycle.</p>
      *
-     * @param clazz the class to scan for related components
+     * @param clazz the class whose package will be scanned
      * @throws PackageNotFoundException if the package or directory is not found
      * @since 1.0.0
      */
@@ -102,11 +105,11 @@ public class ClassScanner {
     /**
      * Instantiates all identified classes, resolving their dependencies using constructor injection.
      *
-     * <p>Instances of {@link MenuLevel} and other injectable classes are created and
-     * registered with the {@link Context}. Dependency resolution ensures that no class is instantiated
-     * until all its required dependencies are available.</p>
+     * <p>This method ensures that all classes, including {@link MenuLevel} and injectable components,
+     * are properly instantiated and registered with the {@link Context}. It validates dependencies and
+     * reports unresolved cases as errors.</p>
      *
-     * @throws RuntimeException if dependencies cannot be resolved for any class
+     * @throws RuntimeException if dependencies cannot be resolved
      * @since 1.0.0
      */
     private static void instantiateClasses() {
@@ -178,8 +181,7 @@ public class ClassScanner {
     private static Object[] getDependencies(Class<?>[] parameterTypes) {
         Object[] parameters = new Object[parameterTypes.length];
         for (int i = 0; i < parameterTypes.length; i++) {
-            Class<?> paramType = parameterTypes[i];
-            parameters[i] = instantiatedObjects.get(paramType);
+            parameters[i] = instantiatedObjects.get(parameterTypes[i]);
         }
         return parameters;
     }
@@ -199,6 +201,9 @@ public class ClassScanner {
     /**
      * Adds a {@link MenuLevel} instance to the context and sets it as the home level if annotated with {@link Home}.
      *
+     * <p>Validates all methods annotated with {@link org.easy.menu.annotation.Action} to ensure they do not
+     * accept parameters, enforcing application requirements.</p>
+     *
      * @param level the menu level instance
      * @since 1.0.0
      */
@@ -206,7 +211,7 @@ public class ClassScanner {
         Method[] actions = level.getActions();
         for (Method action : actions) {
             if (action.getParameterCount() > 0) {
-                throw new IllegalArgumentException("The method: " + action.getName() + " has arguments. Methods annotated with @Action can not have any arguments!");
+                throw new IllegalArgumentException("The method: " + action.getName() + " has arguments. Methods annotated with @Action cannot have any arguments!");
             }
         }
 

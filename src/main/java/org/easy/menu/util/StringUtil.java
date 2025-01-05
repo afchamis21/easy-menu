@@ -7,6 +7,8 @@ package org.easy.menu.util;
  * @author Andre Chamis
  */
 public class StringUtil {
+    private StringUtil(){
+    }
 
     /**
      * Pads the given string with spaces on the right to ensure it reaches the specified length.
