@@ -1,4 +1,4 @@
-package org.easy.menu.domain;
+package org.easy.menu.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
