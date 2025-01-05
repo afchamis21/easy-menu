@@ -12,7 +12,7 @@ Add the library to your project. If using Maven, include the following dependenc
 
 ```xml
 <dependency>
-    <groupId>com.chamis.andre</groupId>
+    <groupId>io.github.afchamis21</groupId>
     <artifactId>easy-menu</artifactId>
     <version>1.0.0</version>
 </dependency>
@@ -21,7 +21,7 @@ Add the library to your project. If using Maven, include the following dependenc
 For Gradle, use:
 
 ```gradle
-implementation 'com.andre.chamis:easy-menu:1.0.0'
+implementation 'io.github.afchamis21:easy-menu:1.0.0'
 ```
 
 ---

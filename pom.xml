@@ -2,13 +2,39 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.chamis.andre</groupId>
+  <groupId>io.github.afchamis21</groupId>
   <artifactId>easy-menu</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
 
-  <name>easy-menu</name>
-  <url>http://maven.apache.org</url>
+  <name>${project.groupId}:${project.artifactId}</name>
+  <description>
+    A lightweight Java library for building dynamic, navigable menu systems in console-based applications.
+  </description>
+  <url>https://github.com/afchamis21/easy-menu</url>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>afchamis21</id>
+      <name>Andre Chamis</name>
+      <email>andrechamis21@gmail.com</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>https://github.com/afchamis21/easy-menu</url>
+    <connection>scm:git:git://github.com/afchamis21/easy-menu.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:afchamis21/easy-menu.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -62,7 +88,7 @@
         <version>3.11.2</version>
         <executions>
           <execution>
-            <phase>package</phase>
+            <id>attach-javadocs</id>
             <goals>
               <goal>jar</goal>
             </goals>
@@ -76,9 +102,9 @@
         <version>3.3.1</version>
         <executions>
           <execution>
-            <phase>package</phase>
+            <id>attach-sources</id>
             <goals>
-              <goal>jar</goal>
+              <goal>jar-no-fork</goal>
             </goals>
           </execution>
         </executions>
@@ -92,6 +118,31 @@
           <target>17</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>3.2.7</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.6.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <publishingServerId>central</publishingServerId>
+          <autoPublish>true</autoPublish>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <repositories>
@@ -102,11 +153,5 @@
     </repository>
   </repositories>
 
-  <distributionManagement>
-    <repository>
-      <id>github</id>
-      <name>GitHub afchamis21 Apache Maven Packages</name>
-      <url>https://maven.pkg.github.com/afchamis21/easy-menu</url>
-    </repository>
-  </distributionManagement>
+
 </project>
