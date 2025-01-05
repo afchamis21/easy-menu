@@ -1,6 +1,6 @@
-package org.easy.menu.annotation;
+package com.chamis.andre.annotation;
 
-import org.easy.menu.domain.MenuLevel;
+import com.chamis.andre.domain.MenuLevel;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

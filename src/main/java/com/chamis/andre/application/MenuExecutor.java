@@ -1,9 +1,9 @@
-package org.easy.menu.application;
+package com.chamis.andre.application;
 
-import org.easy.menu.annotation.Action;
-import org.easy.menu.domain.MenuLevel;
-import org.easy.menu.util.InputUtil;
-import org.easy.menu.util.StringUtil;
+import com.chamis.andre.annotation.Action;
+import com.chamis.andre.domain.MenuLevel;
+import com.chamis.andre.util.InputUtil;
+import com.chamis.andre.util.StringUtil;
 
 import java.lang.reflect.Method;
 import java.util.*;

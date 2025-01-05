@@ -1,4 +1,4 @@
-package org.easy.menu;
+package com.chamis.andre;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

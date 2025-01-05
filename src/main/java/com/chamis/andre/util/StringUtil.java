@@ -1,4 +1,4 @@
-package org.easy.menu.util;
+package com.chamis.andre.util;
 
 /**
  * Utility class for string operations.

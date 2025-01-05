@@ -1,4 +1,4 @@
-package org.easy.menu.exception;
+package com.chamis.andre.exception;
 
 /**
  * Exception thrown when a specified package is not found.

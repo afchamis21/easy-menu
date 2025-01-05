@@ -1,10 +1,11 @@
-package org.easy.menu.application;
+package com.chamis.andre.application;
 
+import com.chamis.andre.annotation.Action;
+import com.chamis.andre.annotation.Home;
+import com.chamis.andre.annotation.Injectable;
+import com.chamis.andre.domain.MenuLevel;
+import com.chamis.andre.exception.PackageNotFoundException;
 import lombok.SneakyThrows;
-import org.easy.menu.annotation.Home;
-import org.easy.menu.annotation.Injectable;
-import org.easy.menu.domain.MenuLevel;
-import org.easy.menu.exception.PackageNotFoundException;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -19,7 +20,7 @@ import java.util.*;
  * {@link MenuLevel} subclasses and classes annotated with {@link Injectable}.
  *
  * <p>This class discovers and resolves dependencies, ensuring the initialization of {@link MenuLevel}
- * instances and injectable components. It also validates actions annotated with {@link org.easy.menu.annotation.Action}
+ * instances and injectable components. It also validates actions annotated with {@link Action}
  * to ensure compliance with application rules.</p>
  *
  * @author Andre Chamis
@@ -201,7 +202,7 @@ public class ClassScanner {
     /**
      * Adds a {@link MenuLevel} instance to the context and sets it as the home level if annotated with {@link Home}.
      *
-     * <p>Validates all methods annotated with {@link org.easy.menu.annotation.Action} to ensure they do not
+     * <p>Validates all methods annotated with {@link Action} to ensure they do not
      * accept parameters, enforcing application requirements.</p>
      *
      * @param level the menu level instance

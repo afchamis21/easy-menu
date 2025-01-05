@@ -1,6 +1,6 @@
-package org.easy.menu.exception;
+package com.chamis.andre.exception;
 
-import org.easy.menu.domain.MenuLevel;
+import com.chamis.andre.domain.MenuLevel;
 
 /**
  * Exception thrown when attempting to navigate to an unknown menu level.

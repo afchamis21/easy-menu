@@ -1,10 +1,11 @@
-package org.easy.menu.application;
+package com.chamis.andre.application;
 
+import com.chamis.andre.annotation.Action;
+import com.chamis.andre.domain.MenuLevel;
+import com.chamis.andre.exception.MissingHomeMenuException;
+import com.chamis.andre.exception.MultipleHomeException;
+import com.chamis.andre.exception.UnknownLevelException;
 import lombok.Getter;
-import org.easy.menu.domain.MenuLevel;
-import org.easy.menu.exception.MissingHomeMenuException;
-import org.easy.menu.exception.MultipleHomeException;
-import org.easy.menu.exception.UnknownLevelException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
  * level of the application.</p>
  *
  * <p>Menu options for navigation are automatically determined by scanning for methods in {@link MenuLevel}
- * annotated with {@link org.easy.menu.annotation.Action}.</p>
+ * annotated with {@link Action}.</p>
  *
  * @since 1.0.0
  */
@@ -71,7 +72,7 @@ public class Context {
      *
      * <p>This method allows adding new menu levels as they are discovered or created.
      * Actions for each menu level are dynamically determined by scanning for annotated methods
-     * using {@link org.easy.menu.annotation.Action}.</p>
+     * using {@link Action}.</p>
      *
      * @param level the menu level to add
      * @since 1.0.0
@@ -119,7 +120,7 @@ public class Context {
      * <p>This method searches for the target menu level in the list of available levels and sets it as the current level.
      * If the level is not found, an {@link UnknownLevelException} will be thrown.</p>
      *
-     * <p>Navigation options are automatically derived from methods annotated with {@link org.easy.menu.annotation.Action}.</p>
+     * <p>Navigation options are automatically derived from methods annotated with {@link Action}.</p>
      *
      * @param target the class of the menu level to navigate to
      * @throws UnknownLevelException if the specified menu level is not found

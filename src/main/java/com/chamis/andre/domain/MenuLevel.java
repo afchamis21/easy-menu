@@ -1,8 +1,8 @@
-package org.easy.menu.domain;
+package com.chamis.andre.domain;
 
-import org.easy.menu.annotation.Action;
-import org.easy.menu.application.Context;
-import org.easy.menu.exception.UnknownLevelException;
+import com.chamis.andre.annotation.Action;
+import com.chamis.andre.application.Context;
+import com.chamis.andre.exception.UnknownLevelException;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

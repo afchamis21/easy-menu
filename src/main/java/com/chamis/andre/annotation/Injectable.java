@@ -1,4 +1,4 @@
-package org.easy.menu.annotation;
+package com.chamis.andre.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

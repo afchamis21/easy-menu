@@ -1,6 +1,7 @@
-package org.easy.menu.exception;
+package com.chamis.andre.exception;
 
-import org.easy.menu.domain.MenuLevel;
+
+import com.chamis.andre.domain.MenuLevel;
 
 /**
  * Exception thrown when multiple home menus are detected in the application.

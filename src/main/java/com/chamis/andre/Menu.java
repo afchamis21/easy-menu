@@ -1,9 +1,9 @@
-package org.easy.menu;
+package com.chamis.andre;
 
-import org.easy.menu.application.ClassScanner;
-import org.easy.menu.application.Context;
-import org.easy.menu.application.MenuExecutor;
-import org.easy.menu.domain.MenuLevel;
+import com.chamis.andre.application.ClassScanner;
+import com.chamis.andre.application.Context;
+import com.chamis.andre.application.MenuExecutor;
+import com.chamis.andre.domain.MenuLevel;
 
 /**
  * Entry point for starting the menu-based application.

@@ -12,7 +12,7 @@ Add the library to your project. If using Maven, include the following dependenc
 
 ```xml
 <dependency>
-    <groupId>org.easy.menu</groupId>
+    <groupId>com.easy.menu</groupId>
     <artifactId>easy-menu</artifactId>
     <version>1.0.0</version>
 </dependency>
@@ -21,7 +21,7 @@ Add the library to your project. If using Maven, include the following dependenc
 For Gradle, use:
 
 ```gradle
-implementation 'org.easy.menu:easy-menu:1.0.0'
+implementation 'com.andre.chamis:easy-menu:1.0.0'
 ```
 
 ---
@@ -45,9 +45,10 @@ public class Application {
 Create classes that extend `MenuLevel` to define different levels of your menu.
 
 **Example:**
+
 ```java
-import org.easy.menu.domain.MenuLevel;
-import org.easy.menu.annotation.Action;
+import com.chamis.andre.domain.MenuLevel;
+import com.chamis.andre.annotation.Action;
 
 public class MainMenu extends MenuLevel {
 
@@ -112,8 +113,9 @@ The `Context` class is the core of the library, managing:
 - Home level (starting point).
 
 Set the home level using the `@Home` annotation:
+
 ```java
-import org.easy.menu.annotation.Home;
+import com.chamis.andre.annotation.Home;
 
 @Home
 public class MainMenu extends MenuLevel {
@@ -178,10 +180,11 @@ com.example.menu
 ### **Code**
 
 **MainMenu.java:**
+
 ```java
-import org.easy.menu.domain.MenuLevel;
-import org.easy.menu.annotation.Action;
-import org.easy.menu.annotation.Home;
+import com.chamis.andre.domain.MenuLevel;
+import com.chamis.andre.annotation.Action;
+import com.chamis.andre.annotation.Home;
 
 @Home
 public class MainMenu extends MenuLevel {
@@ -209,9 +212,10 @@ public class MainMenu extends MenuLevel {
 ```
 
 **SubMenu.java:**
+
 ```java
-import org.easy.menu.domain.MenuLevel;
-import org.easy.menu.annotation.Action;
+import com.chamis.andre.domain.MenuLevel;
+import com.chamis.andre.annotation.Action;
 
 public class SubMenu extends MenuLevel {
 
