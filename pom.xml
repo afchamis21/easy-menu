@@ -101,4 +101,12 @@
       <url>https://repo.maven.apache.org/maven2/</url>
     </repository>
   </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub afchamis21 Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/afchamis21/easy-menu</url>
+    </repository>
+  </distributionManagement>
 </project>
